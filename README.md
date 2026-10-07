@@ -1,10 +1,6 @@
-# Your Project Name
+# Nestr
 
-> **Replace this whole file.** It is a worked example of the README your project
-> will be graded from, not a file to leave as it is. Start with
-> [START-HERE.md](START-HERE.md).
-
-One sentence saying what this does and who it is for.
+Nestr is an Activity Logger meant to game-ify your tasks, giving rewards to finished tasks with Creatures hatched from eggs.
 
 **Live site:** https://yourusername.github.io/your-repo-name/
 **API:** https://your-api.onrender.com/healthz

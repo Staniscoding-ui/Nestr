@@ -1,233 +1,162 @@
-import { useEffect, useState } from 'react'
-import {
-  listActivities,
-  createActivity,
-  updateActivity,
-  deleteActivity,
-} from './api'
+import { useEffect, useState } from "react";
+import BottomNav from "./components/BottomNav";
 
-const EMPTY_FORM = {
-  name: '',
-  description: '',
+import HomePage from "./pages/HomePage";
+import NestPage from "./pages/NestPage";
+import AddActivityPage from "./pages/AddActivityPage";
+import ProfilePage from "./pages/ProfilePage";
+
+const STORAGE_KEY = "nestr-activities";
+
+function loadActivities() {
+  try {
+    const savedActivities =
+      localStorage.getItem(STORAGE_KEY);
+
+    if (!savedActivities) {
+      return [];
+    }
+
+    const parsedActivities =
+      JSON.parse(savedActivities);
+
+    if (!Array.isArray(parsedActivities)) {
+      return [];
+    }
+
+    return parsedActivities.filter((activity) => {
+      return (
+        activity &&
+        typeof activity === "object" &&
+        typeof activity.id === "number" &&
+        typeof activity.activity === "string" &&
+        typeof activity.description === "string" &&
+        typeof activity.date === "string"
+      );
+    });
+  } catch {
+    return [];
+  }
 }
 
-export default function App() {
-  const [status, setStatus] = useState('loading')
-  const [activities, setActivities] = useState([])
-  const [error, setError] = useState(null)
-  const [slow, setSlow] = useState(false)
+function App() {
+  const [activePage, setActivePage] = useState("home");
 
-  const [form, setForm] = useState(EMPTY_FORM)
-  const [saving, setSaving] = useState(false)
+  const [activities, setActivities] = useState(
+    loadActivities
+  );
 
-  async function load() {
-    setStatus('loading')
-    setError(null)
-
-    const timer = setTimeout(() => setSlow(true), 3000)
-
-    try {
-      setActivities(await listActivities())
-      setStatus('ready')
-    } catch (caught) {
-      setError(caught)
-      setStatus('error')
-    } finally {
-      clearTimeout(timer)
-      setSlow(false)
-    }
-  }
+  const [formData, setFormData] = useState({
+    activity: "",
+    description: "",
+  });
 
   useEffect(() => {
-    load()
-  }, [])
-
-  async function handleSubmit(event) {
-    event.preventDefault()
-
-    if (!form.name.trim()) return
-
-    setSaving(true)
-    setError(null)
-
     try {
-      const created = await createActivity({
-        name: form.name.trim(),
-        description: form.description.trim(),
-        completed: false,
-      })
-
-      setActivities([created, ...activities])
-      setForm(EMPTY_FORM)
-    } catch (caught) {
-      setError(caught)
-    } finally {
-      setSaving(false)
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(activities)
+      );
+    } catch (error) {
+      console.error(
+        "Unable to save activities:",
+        error
+      );
     }
+  }, [activities]);
+
+  function handleChange(event) {
+    const { name, value } = event.target;
+
+    setFormData((current) => ({
+      ...current,
+      [name]: value,
+    }));
   }
 
-  async function handleComplete(activity) {
-    try {
-      const updated = await updateActivity(activity.id, {
-        completed: !activity.completed,
-      })
+  function handleSubmit(event) {
+    event.preventDefault();
 
-      setActivities(
-        activities.map((item) =>
-          item.id === updated.id ? updated : item
-        )
-      )
-    } catch (caught) {
-      setError(caught)
+    const activityName = formData.activity.trim();
+    const description = formData.description.trim();
+
+    if (!activityName) {
+      return;
     }
+
+    const newActivity = {
+      id: Date.now(),
+      activity: activityName,
+      description,
+      date: new Date().toLocaleDateString(),
+    };
+
+    setActivities((current) => [
+      newActivity,
+      ...current,
+    ]);
+
+    setFormData({
+      activity: "",
+      description: "",
+    });
+
+    setActivePage("home");
   }
 
-  async function handleDelete(id) {
-    const previous = activities
+  function renderPage() {
+    switch (activePage) {
+      case "nest":
+        return (
+          <NestPage
+            activityCount={activities.length}
+            onAddActivity={() =>
+              setActivePage("add")
+            }
+          />
+        );
 
-    setActivities(
-      activities.filter((activity) => activity.id !== id)
-    )
+      case "add":
+        return (
+          <AddActivityPage
+            formData={formData}
+            onChange={handleChange}
+            onSubmit={handleSubmit}
+          />
+        );
 
-    try {
-      await deleteActivity(id)
-    } catch (caught) {
-      setActivities(previous)
-      setError(caught)
+      case "profile":
+        return (
+          <ProfilePage
+            activityCount={activities.length}
+          />
+        );
+
+      case "home":
+      default:
+        return (
+          <HomePage
+            activities={activities}
+            onAddActivity={() =>
+              setActivePage("add")
+            }
+          />
+        );
     }
   }
-
-  const completedCount = activities.filter(
-    (activity) => activity.completed
-  ).length
 
   return (
     <div className="page">
-      <header>
-        <h1>Nestr</h1>
+      <main className="page-content">
+        {renderPage()}
+      </main>
 
-        <p className="lede">
-          Activity Game-ified Logger
-        </p>
-      </header>
-
-      <section className="card">
-        <h2>Your Progress</h2>
-
-        <p>
-          {completedCount} activities completed
-        </p>
-      </section>
-
-      {error && (
-        <p className="error" role="alert">
-          {error.message}
-          <button onClick={load}>Try again</button>
-        </p>
-      )}
-
-      <form onSubmit={handleSubmit} className="card">
-        <h2>Add Activity</h2>
-
-        <label htmlFor="name">
-          Activity Name
-        </label>
-
-        <input
-          id="name"
-          value={form.name}
-          onChange={(event) =>
-            setForm({
-              ...form,
-              name: event.target.value,
-            })
-          }
-          maxLength={120}
-          placeholder="e.g. Study JavaScript"
-          required
-        />
-
-        <label htmlFor="description">
-          Description
-        </label>
-
-        <textarea
-          id="description"
-          value={form.description}
-          onChange={(event) =>
-            setForm({
-              ...form,
-              description: event.target.value,
-            })
-          }
-          maxLength={500}
-          rows={3}
-          placeholder="What are you going to do?"
-        />
-
-        <button type="submit" disabled={saving}>
-          {saving ? 'Adding...' : 'Add Activity'}
-        </button>
-      </form>
-
-      <section>
-        <h2>Activities</h2>
-
-        {status === 'loading' && (
-          <p className="muted">
-            Loading
-            {slow
-              ? '. The server may be waking up...'
-              : '...'}
-          </p>
-        )}
-
-        {status === 'ready' &&
-          activities.length === 0 && (
-            <p className="muted">
-              No activities yet. Add your first one above.
-            </p>
-          )}
-
-        {status === 'ready' &&
-          activities.length > 0 && (
-            <ul className="list">
-              {activities.map((activity) => (
-                <li key={activity.id} className="card">
-                  <h3>{activity.name}</h3>
-
-                  {activity.description && (
-                    <p>{activity.description}</p>
-                  )}
-
-                  <p>
-                    {activity.completed
-                      ? 'Completed'
-                      : 'Not completed'}
-                  </p>
-
-                  <button
-                    onClick={() =>
-                      handleComplete(activity)
-                    }
-                  >
-                    {activity.completed
-                      ? 'Mark Incomplete'
-                      : 'Complete'}
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      handleDelete(activity.id)
-                    }
-                  >
-                    Delete
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-      </section>
+      <BottomNav
+        activePage={activePage}
+        onNavigate={setActivePage}
+      />
     </div>
-  )
+  );
 }
+
+export default App;
