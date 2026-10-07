@@ -1,4 +1,4 @@
-import ActivityCard from "./ActivityCard";
+import ActivityCard from "./ActivityCard.jsx";
 
 function ActivityList({ activities }) {
   if (activities.length === 0) {
