@@ -7,7 +7,7 @@ import AddActivityPage from "./pages/AddActivityPage";
 import ProfilePage from "./pages/ProfilePage";
 
 const STORAGE_KEY = "nestr-activities";
-
+const CREATURE_COUNT = 48;
 function loadActivities() {
   try {
     const savedActivities =
@@ -39,6 +39,11 @@ function loadActivities() {
   }
 }
 
+function getRandomCreature() {
+  return Math.floor(
+    Math.random() * CREATURE_COUNT
+  ) + 1;
+}
 function App() {
   const [activePage, setActivePage] = useState("home");
 
@@ -74,6 +79,20 @@ function App() {
     }));
   }
 
+  function handleComplete(activityId) {
+  setActivities((current) =>
+    current.map((activity) =>
+      activity.id === activityId
+        ? {
+            ...activity,
+            status: "completed",
+            creatureId: getRandomCreature(),
+          }
+        : activity
+    )
+  );
+}
+
   function handleSubmit(event) {
     event.preventDefault();
 
@@ -89,6 +108,7 @@ function App() {
       activity: activityName,
       description,
       date: new Date().toLocaleDateString(),
+      status: "pending",
     };
 
     setActivities((current) => [
@@ -140,6 +160,7 @@ function App() {
             onAddActivity={() =>
               setActivePage("add")
             }
+            onComplete={handleComplete}
           />
         );
     }

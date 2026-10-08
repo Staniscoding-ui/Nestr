@@ -2,8 +2,13 @@ import Header from "../components/Header";
 import Card from "../components/Card";
 import Button from "../components/Button";
 import ActivityList from "../components/ActivityList";
+import CreaturePen from "../components/CreaturePen";
 
-function HomePage({ activities, onAddActivity }) {
+function HomePage({
+  activities,
+  onAddActivity,
+  onComplete,
+}) {
   return (
     <>
       <Header
@@ -11,6 +16,8 @@ function HomePage({ activities, onAddActivity }) {
         subtitle="Turn your activities into progress"
       />
 
+      <CreaturePen activities={activities} />
+      
       <section className="section">
         <Card title="Welcome to Nestr">
           <p>
@@ -27,8 +34,11 @@ function HomePage({ activities, onAddActivity }) {
       </section>
 
       <section className="section">
-        <Card title="Recent Activity">
-          <ActivityList activities={activities} />
+        <Card title="Your Eggs">
+          <ActivityList
+            activities={activities}
+            onComplete={onComplete}
+          />
         </Card>
       </section>
     </>
@@ -36,3 +46,4 @@ function HomePage({ activities, onAddActivity }) {
 }
 
 export default HomePage;
+

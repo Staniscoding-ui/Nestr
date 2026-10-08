@@ -1,6 +1,6 @@
-import ActivityCard from "./ActivityCard.jsx";
+import ActivityCard from "./ActivityCard";
 
-function ActivityList({ activities }) {
+function ActivityList({ activities, onComplete }) {
   if (activities.length === 0) {
     return (
       <p className="muted">
@@ -13,7 +13,10 @@ function ActivityList({ activities }) {
     <ul className="list">
       {activities.map((activity) => (
         <li key={activity.id}>
-          <ActivityCard activity={activity} />
+          <ActivityCard
+            activity={activity}
+            onComplete={onComplete}
+          />
         </li>
       ))}
     </ul>
