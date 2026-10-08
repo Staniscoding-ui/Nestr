@@ -1,40 +1,62 @@
-// The real client. Every function here talks to YOUR Express API.
-//
-// This is the file that matters for your finals project. mockApi.js exists so
-// you can build the interface before this has anywhere to point.
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  "http://localhost:3000"
 
-const BASE = import.meta.env.VITE_API_BASE_URL || ''
-
-async function request(path, options) {
-  const response = await fetch(`${BASE}${path}`, {
-    headers: { 'Content-Type': 'application/json' },
-    ...options,
-  })
+async function request(path, options = {}) {
+  const response = await fetch(
+    `${API_BASE_URL}${path}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        ...(options.headers || {}),
+      },
+      ...options,
+    }
+  )
 
   if (!response.ok) {
-    // Try to use the API's own message; fall back to the status line.
-    let message = `${response.status} ${response.statusText}`
+    let message = "Request failed"
+
     try {
-      const body = await response.json()
-      if (body?.error) message = body.error
+      const data = await response.json()
+
+      if (data.error) {
+        message = data.error
+      }
     } catch {
-      // The body was not JSON. The status line is all we have.
+      // Keep the default error message.
     }
+
     throw new Error(message)
   }
 
-  return response.status === 204 ? null : response.json()
+  if (response.status === 204) {
+    return null
+  }
+
+  return response.json()
 }
 
-export const listSightings = () => request('/api/sightings')
+export async function listActivities() {
+  return request("/api/activities")
+}
 
-export const getSighting = (id) => request(`/api/sightings/${id}`)
+export async function createActivity(activity) {
+  return request("/api/activities", {
+    method: "POST",
+    body: JSON.stringify(activity),
+  })
+}
 
-export const createSighting = (input) =>
-  request('/api/sightings', { method: 'POST', body: JSON.stringify(input) })
+export async function updateActivity(id, activity) {
+  return request(`/api/activities/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(activity),
+  })
+}
 
-export const updateSighting = (id, input) =>
-  request(`/api/sightings/${id}`, { method: 'PUT', body: JSON.stringify(input) })
-
-export const deleteSighting = (id) =>
-  request(`/api/sightings/${id}`, { method: 'DELETE' })
+export async function deleteActivity(id) {
+  return request(`/api/activities/${id}`, {
+    method: "DELETE",
+  })
+}

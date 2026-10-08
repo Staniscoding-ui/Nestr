@@ -6,72 +6,73 @@ import NestPage from "./pages/NestPage";
 import AddActivityPage from "./pages/AddActivityPage";
 import ProfilePage from "./pages/ProfilePage";
 
-const STORAGE_KEY = "nestr-activities";
+import {
+  listActivities,
+  createActivity,
+  updateActivity,
+} from "./api/httpApi";
+
 const CREATURE_COUNT = 48;
-function loadActivities() {
-  try {
-    const savedActivities =
-      localStorage.getItem(STORAGE_KEY);
-
-    if (!savedActivities) {
-      return [];
-    }
-
-    const parsedActivities =
-      JSON.parse(savedActivities);
-
-    if (!Array.isArray(parsedActivities)) {
-      return [];
-    }
-
-    return parsedActivities.filter((activity) => {
-      return (
-        activity &&
-        typeof activity === "object" &&
-        typeof activity.id === "number" &&
-        typeof activity.activity === "string" &&
-        typeof activity.description === "string" &&
-        typeof activity.date === "string"
-      );
-    });
-  } catch {
-    return [];
-  }
-}
 
 function getRandomCreature() {
-  return Math.floor(
-    Math.random() * CREATURE_COUNT
-  ) + 1;
-}
-function App() {
-  const [activePage, setActivePage] = useState("home");
-
-  const [activities, setActivities] = useState(
-    loadActivities
+  return (
+    Math.floor(
+      Math.random() * CREATURE_COUNT
+    ) + 1
   );
+}
 
-  const [formData, setFormData] = useState({
-    activity: "",
-    description: "",
-  });
+function App() {
+  const [activePage, setActivePage] =
+    useState("home");
+
+  const [activities, setActivities] =
+    useState([]);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [error, setError] =
+    useState("");
+
+  const [formData, setFormData] =
+    useState({
+      activity: "",
+      description: "",
+    });
 
   useEffect(() => {
-    try {
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(activities)
-      );
-    } catch (error) {
-      console.error(
-        "Unable to save activities:",
-        error
-      );
+    async function loadActivities() {
+      try {
+        setLoading(true);
+        setError("");
+
+        const data =
+          await listActivities();
+
+        setActivities(data);
+      } catch (error) {
+        console.error(
+          "Unable to load activities:",
+          error
+        );
+
+        setError(
+          "Unable to connect to the Nestr server."
+        );
+      } finally {
+        setLoading(false);
+      }
     }
-  }, [activities]);
+
+    loadActivities();
+  }, []);
 
   function handleChange(event) {
-    const { name, value } = event.target;
+    const {
+      name,
+      value,
+    } = event.target;
 
     setFormData((current) => ({
       ...current,
@@ -79,57 +80,117 @@ function App() {
     }));
   }
 
-  function handleComplete(activityId) {
-  setActivities((current) =>
-    current.map((activity) =>
-      activity.id === activityId
-        ? {
-            ...activity,
-            status: "completed",
-            creatureId: getRandomCreature(),
-          }
-        : activity
-    )
-  );
-}
+  async function handleComplete(activityId) {
+    const activity =
+      activities.find(
+        (item) =>
+          item.id === activityId
+      );
 
-  function handleSubmit(event) {
-    event.preventDefault();
+    if (!activity) return;
 
-    const activityName = formData.activity.trim();
-    const description = formData.description.trim();
-
-    if (!activityName) {
-      return;
-    }
-
-    const newActivity = {
-      id: Date.now(),
-      activity: activityName,
-      description,
-      date: new Date().toLocaleDateString(),
-      status: "pending",
+    const completedActivity = {
+      ...activity,
+      status: "completed",
+      creatureId:
+        getRandomCreature(),
     };
 
-    setActivities((current) => [
-      newActivity,
-      ...current,
-    ]);
+    try {
+      setError("");
 
-    setFormData({
-      activity: "",
-      description: "",
-    });
+      const updatedActivity =
+        await updateActivity(
+          activityId,
+          completedActivity
+        );
 
-    setActivePage("home");
+      setActivities((current) =>
+        current.map((item) =>
+          item.id === activityId
+            ? updatedActivity
+            : item
+        )
+      );
+    } catch (error) {
+      console.error(
+        "Unable to complete activity:",
+        error
+      );
+
+      setError(
+        "Unable to complete the activity."
+      );
+    }
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    const activityName =
+      formData.activity.trim();
+
+    const description =
+      formData.description.trim();
+
+    if (!activityName) return;
+
+    const newActivity = {
+      activity: activityName,
+      description,
+      date: new Date()
+        .toLocaleDateString(),
+      status: "pending",
+      creatureId: null,
+    };
+
+    try {
+      setError("");
+
+      const createdActivity =
+        await createActivity(
+          newActivity
+        );
+
+      setActivities((current) => [
+        createdActivity,
+        ...current,
+      ]);
+
+      setFormData({
+        activity: "",
+        description: "",
+      });
+
+      setActivePage("home");
+    } catch (error) {
+      console.error(
+        "Unable to create activity:",
+        error
+      );
+
+      setError(
+        "Unable to save the activity."
+      );
+    }
   }
 
   function renderPage() {
+    if (loading) {
+      return (
+        <p className="muted">
+          Loading your activities...
+        </p>
+      );
+    }
+
     switch (activePage) {
       case "nest":
         return (
           <NestPage
-            activityCount={activities.length}
+            activityCount={
+              activities.length
+            }
             onAddActivity={() =>
               setActivePage("add")
             }
@@ -148,7 +209,9 @@ function App() {
       case "profile":
         return (
           <ProfilePage
-            activityCount={activities.length}
+            activityCount={
+              activities.length
+            }
           />
         );
 
@@ -169,6 +232,12 @@ function App() {
   return (
     <div className="page">
       <main className="page-content">
+        {error && (
+          <p className="error">
+            {error}
+          </p>
+        )}
+
         {renderPage()}
       </main>
 

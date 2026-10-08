@@ -20,7 +20,7 @@ try {
   await pool.query(readFileSync(file, 'utf8'))
   console.log(`ran ${file}`)
 } catch (error) {
-  console.error(`failed on ${file}: ${error.message}`)
+  console.error(`failed on ${file}:`, error)
   process.exitCode = 1
 } finally {
   await pool.end()
