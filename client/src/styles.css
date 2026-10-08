@@ -234,9 +234,42 @@ label,
   height: 100%;
 }
 
+/* Creature */
+
+.creature-display {
+  position: relative;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  min-height: 220px;
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(124, 58, 237, 0.08),
+      rgba(245, 158, 11, 0.05)
+    );
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+}
+
+.creature-image {
+  width: 128px;
+  height: 128px;
+
+  object-fit: contain;
+
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
 /* Activity form */
 
-form.card {
+form {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
@@ -270,6 +303,11 @@ textarea::placeholder {
   opacity: 0.8;
 }
 
+form button {
+  align-self: flex-start;
+  margin-top: var(--space-2);
+}
+
 /* Buttons */
 
 button {
@@ -289,11 +327,6 @@ button {
 
 button:hover:not(:disabled) {
   opacity: 0.85;
-}
-
-form.card button {
-  align-self: flex-start;
-  margin-top: var(--space-2);
 }
 
 .button {
@@ -491,5 +524,14 @@ form.card button {
 
   .header-actions {
     gap: 4px;
+  }
+
+  .creature-display {
+    min-height: 180px;
+  }
+
+  .creature-image {
+    width: 112px;
+    height: 112px;
   }
 }

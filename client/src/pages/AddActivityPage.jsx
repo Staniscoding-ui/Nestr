@@ -1,5 +1,6 @@
 import Header from "../components/Header";
 import Button from "../components/Button";
+import Card from "../components/Card";
 
 function AddActivityPage({
   formData,
@@ -13,38 +14,40 @@ function AddActivityPage({
         subtitle="Record something you accomplished"
       />
 
-      <form className="card" onSubmit={onSubmit}>
-        <label htmlFor="activity">
-          Activity
-        </label>
+      <Card>
+        <form onSubmit={onSubmit}>
+          <label htmlFor="activity">
+            Activity
+          </label>
 
-        <input
-          id="activity"
-          name="activity"
-          type="text"
-          value={formData.activity}
-          onChange={onChange}
-          placeholder="What did you do?"
-          required
-        />
+          <input
+            id="activity"
+            name="activity"
+            type="text"
+            value={formData.activity}
+            onChange={onChange}
+            placeholder="What did you do?"
+            required
+          />
 
-        <label htmlFor="description">
-          Description
-        </label>
+          <label htmlFor="description">
+            Description
+          </label>
 
-        <textarea
-          id="description"
-          name="description"
-          rows="4"
-          value={formData.description}
-          onChange={onChange}
-          placeholder="Add some details..."
-        />
+          <textarea
+            id="description"
+            name="description"
+            rows="4"
+            value={formData.description}
+            onChange={onChange}
+            placeholder="Add some details..."
+          />
 
-        <Button type="submit">
-          Save Activity
-        </Button>
-      </form>
+          <Button type="submit" variant="accent">
+            Save Activity
+          </Button>
+        </form>
+      </Card>
     </>
   );
 }
