@@ -6,9 +6,10 @@ Nestr is an Activity Logger meant to game-ify your tasks, giving rewards to fini
 
 **API:** http://localhost:3000/healthz
 
-**Demo video:** (link)
+**Demo video:**  https://github.com/user-attachments/assets/fd644021-58a5-454e-837f-f524b8ddd808
 
-![A screenshot of the main screen](docs/assets/screenshot.png)
+![A screenshot of the main screen] <img width="900" height="1411" alt="Nestr_MainScreen" src="https://github.com/user-attachments/assets/028a6570-a111-4056-af20-ed64297cfc50" />
+
 
 ## What it does
 
