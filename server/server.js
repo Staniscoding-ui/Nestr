@@ -1,7 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import { pool } from './db/pool.js'
-import * as activities from './activitiesRepo.js'
+import * as activities from "./ActivitiesRepo.js"
 
 const app = express()
 

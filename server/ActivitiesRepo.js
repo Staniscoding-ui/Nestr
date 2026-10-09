@@ -3,12 +3,11 @@
 
 const SELECT_COLUMNS = "id, activity, description, date, status, creature_id AS \"creatureId\""
 
-// helper to make sure the id isn't weird or malicious
+// helper to make sure the id isn't malicious
 function getNumericId(id) {
-  const numericId = parseInt(id) // using parseInt instead of Number cause old habits die hard lol
+  const numericId = parseInt(id)
 
   if (isNaN(numericId) || numericId <= 0) {
-    console.log("yikes, got a bad id:", id); // left a debug log in here oops
     return null
   }
 
@@ -46,7 +45,6 @@ export async function getById(pool, id) {
 }
 
 export async function create(pool, value) {
-  // NOTE: remember that creatureId maps to creature_id in the db table!
   const result = await pool.query(
     `
       INSERT INTO activities
@@ -67,7 +65,6 @@ export async function create(pool, value) {
   return result.rows[0]
 }
 
-// updating stuff - make sure to check id first
 export async function update(pool, id, value) {
   const numericId = getNumericId(id)
 
