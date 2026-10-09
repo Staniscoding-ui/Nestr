@@ -4,7 +4,7 @@ import BottomNav from "./components/BottomNav";
 import HomePage from "./pages/HomePage";
 import NestPage from "./pages/NestPage";
 import AddActivityPage from "./pages/AddActivityPage";
-import ProfilePage from "./pages/ProfilePage";
+import PenPage from "./pages/PenPage";
 
 import {
   listActivities,
@@ -188,12 +188,11 @@ function App() {
       case "nest":
         return (
           <NestPage
-            activityCount={
-              activities.length
-            }
+            activities={activities}
             onAddActivity={() =>
               setActivePage("add")
             }
+            onComplete={handleComplete}
           />
         );
 
@@ -206,12 +205,10 @@ function App() {
           />
         );
 
-      case "profile":
+      case "pen":
         return (
-          <ProfilePage
-            activityCount={
-              activities.length
-            }
+          <PenPage
+            activities={activities}
           />
         );
 

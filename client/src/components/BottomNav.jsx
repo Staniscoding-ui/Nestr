@@ -2,7 +2,10 @@ import NavItem from "./NavItem";
 
 function BottomNav({ activePage, onNavigate }) {
   return (
-    <nav className="bottom-nav" aria-label="Main navigation">
+    <nav
+      className="bottom-nav"
+      aria-label="Main navigation"
+    >
       <NavItem
         label="Home"
         active={activePage === "home"}
@@ -11,24 +14,24 @@ function BottomNav({ activePage, onNavigate }) {
       />
 
       <NavItem
-        label="Nest"
-        active={activePage === "nest"}
-        onClick={() => onNavigate("nest")}
-        icon={<span>☆</span>}
-      />
-
-      <NavItem
-        label="Add"
+        label="Task"
         active={activePage === "add"}
         onClick={() => onNavigate("add")}
         icon={<span>+</span>}
       />
 
       <NavItem
-        label="Profile"
-        active={activePage === "profile"}
-        onClick={() => onNavigate("profile")}
-        icon={<span>●</span>}
+        label="Nest"
+        active={activePage === "nest"}
+        onClick={() => onNavigate("nest")}
+        icon={<span>🥚</span>}
+      />
+
+      <NavItem
+        label="Pen"
+        active={activePage === "pen"}
+        onClick={() => onNavigate("pen")}
+        icon={<span>🐾</span>}
       />
     </nav>
   );

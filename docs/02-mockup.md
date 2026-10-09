@@ -10,6 +10,7 @@ scores in the lowest band, because the thing being asked for is the picture.
 Put the exported images in `assets/` and link them here, so the repository
 carries them too.
 
+../client/src/assets/misc_files/Nestr_Mockup.png
 ## What it should show
 
 - Every screen in your revised proposal, and no screens that are not in it
