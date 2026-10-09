@@ -3,16 +3,19 @@
 Nestr is an Activity Logger meant to game-ify your tasks, giving rewards to finished tasks with Creatures hatched from eggs.
 
 **Live site:** https://github.com/Staniscoding-ui/Nestr/
-**API:** **API:** http://localhost:3000/healthz
+
+**API:** http://localhost:3000/healthz
+
 **Demo video:** (link)
 
 ![A screenshot of the main screen](docs/assets/screenshot.png)
 
 ## What it does
 
--Logs activities a user completes with a title, description and date.
--Hatch random pixel creatures whenever you finish said activity
--Hatched creatures go into your nest, where their collection may grow 
+* Logs activities a user completes with a title, description and date.
+* Hatch random pixel creatures whenever you finish said activity.
+* Hatched creatures go into your nest, where their collection may grow.
+
 ## Built with
 
 * React
@@ -41,6 +44,7 @@ Before running Nestr, install:
 
 ```bash
 git clone https://github.com/Staniscoding-ui/Nestr.git
+
 cd Nestr
 ```
 
@@ -67,6 +71,8 @@ npm install
 Copy the environment example:
 
 **Windows:**
+
+In PowerShell:
 
 ```powershell
 copy .env.example .env
@@ -102,9 +108,7 @@ node --env-file=.env server.js
 
 The API will run at:
 
-```text
 http://localhost:3000
-```
 
 You can check that the API is running by opening:
 
@@ -138,11 +142,9 @@ Start the development server:
 npm run dev
 ```
 
-The client will normally be available at:
+The client will usually be available at:
 
-```text
 http://localhost:5173
-```
 
 ## Environment Variables
 
@@ -162,9 +164,7 @@ The server uses `server/.env.example` as a template for the required variables.
 
 The client connects to the local API at:
 
-```text
 http://localhost:3000
-```
 
 ## Project Structure
 
@@ -228,13 +228,14 @@ Sample development data is stored in:
 server/db/seed.sql
 ```
 
-A new PostgreSQL database can be created and initialized using these files, allowing the project to be set up on another computer without using the original data
+A new PostgreSQL database can be created and initialized using these files, allowing the project to be set up on another computer without using the original data.
 
 ## What I would do next
 
--More work with Front end
--focusing on learning how to use AI effectively
--More concrete Programming fundamentals
+* More work with Front end
+* focusing on learning how to use AI effectively
+* More concrete Programming fundamentals
+
 ## Author
 
 Predilla Stanley Emer M. CS-401
@@ -242,10 +243,12 @@ Predilla Stanley Emer M. CS-401
 ## AI use
 
 AI assistance was used during the development of Nestr. OpenAI's ChatGPT (GPT-5.6 Luna) was used for programming guidance, debugging and PostgreSQL integration.
+
 ![Built with AI assistance](https://img.shields.io/badge/built%20with-AI%20assistance-0b5fff)
 
-- a link to [AI-USAGE.md](AI-USAGE.md), where the full account lives
+* a link to [AI-USAGE.md](AI-USAGE.md), where the full account lives
 
 ## Licence
 
 MIT, see [LICENSE](LICENSE).
+

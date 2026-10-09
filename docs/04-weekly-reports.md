@@ -76,7 +76,7 @@ mounted above cors" is.
 
 **Stuck.** A lot of the code failed when reapplying the projects design with the database. Often the css file kept breaking.
 
-**Hours.**this took 8 hours.
+**Hours.**this took 8 hours
 
 **Next.** Last touches.
 
